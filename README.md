@@ -1,63 +1,56 @@
-# Vantage
+<div align="center">
+  <h1>Vantage</h1>
+  <p><strong>Intelligent CI/CD Analytics & Webhook Processing for GitHub Actions</strong></p>
+  
+  [![FastAPI](https://img.shields.io/badge/FastAPI-009688?style=for-the-badge&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
+  [![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)](https://reactjs.org/)
+  [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-316192?style=for-the-badge&logo=postgresql&logoColor=white)](https://www.postgresql.org/)
+  [![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)](https://www.docker.com/)
+</div>
 
-Vantage is a full-stack CI/CD Analytics and Webhook processing application designed to track, visualize, and analyze GitHub Actions workflows. 
+<br />
+
+## What is Vantage?
+Vantage is a full-stack analytics platform that provides actionable insights into your GitHub Actions pipelines. It ingests real-time webhook payloads from GitHub, processes workflow run data, and visualizes CI/CD performance—helping teams identify flaky tests, optimize build durations, and track deployment success rates.
+
+## Features
+- **Real-Time Webhook Ingestion**: Securely receives and validates `workflow_run` events directly from GitHub.
+- **Dynamic Analytics Dashboard**: Visualizes Mean Time To Recovery (MTTR), daily failure rates, and build duration trends.
+- **Flaky Workflow Detection**: Algorithmically identifies unstable pipelines that frequently toggle between success and failure.
+- **Multi-Tenant Architecture**: Add a single webhook URL to multiple repositories to monitor your entire organization from one centralized dashboard.
+- **Automated Infrastructure**: Fully containerized with Docker Compose, featuring automated zero-downtime EC2 deployments via GitHub Actions.
 
 ## Tech Stack
-- **Backend:** FastAPI, Python, SQLAlchemy, PostgreSQL
-- **Frontend:** React, Vite, Tailwind CSS, Recharts
-- **Infra:** Docker Compose, Prometheus, Grafana, Nginx
-- **CI/CD:** GitHub Actions
+- **Backend**: Python, FastAPI, SQLAlchemy, PostgreSQL
+- **Frontend**: React, Vite, Tailwind CSS, Recharts
+- **Infrastructure**: Docker, Nginx, Prometheus, Grafana, AWS EC2
+- **CI/CD**: GitHub Actions
 
-## Local Setup
+## Architecture
+1. **GitHub** sends a cryptographic webhook payload upon any Action completion.
+2. **FastAPI (Backend)** validates the HMAC signature, parses the payload, and upserts the data into **PostgreSQL**.
+3. **React (Frontend)** fetches aggregated metrics via the REST API to render beautiful, responsive charts.
+4. **Prometheus & Grafana** run in the background to monitor API health, request latency, and HTTP error rates.
 
-### 1. Environment Variables
-Create a `.env` file in the root directory (this is automatically loaded by docker-compose) or set them in your environment:
-```env
-POSTGRES_DB=Vantage
-POSTGRES_USER=Vantage
-POSTGRES_PASSWORD=Vantage
-GITHUB_WEBHOOK_SECRET=your_github_webhook_secret
-GF_SECURITY_ADMIN_PASSWORD=admin
-```
+---
 
-### 2. Running the Full Stack (Docker)
-To spin up the entire system (Database, Backend, Frontend, Prometheus, Grafana, Nginx):
+## Quick Start (Local Development)
+
+### 1. Run the Full Stack with Docker
+Spin up the Database, Backend, Frontend, and Observability stack in a single command:
 ```bash
 docker compose up -d --build
 ```
-- **Frontend:** http://localhost:80 (via Nginx)
-- **Backend API Docs:** http://localhost:8000/docs
-- **Prometheus:** http://localhost:9090
-- **Grafana:** http://localhost:3001 (User: `admin` / Password: `admin`)
+- **Dashboard**: `http://localhost`
+- **API Docs**: `http://localhost:8000/docs`
+- **Grafana**: `http://localhost:3001` (User/Pass: `admin`)
 
-### 3. Running for Local Development (Without Docker)
-**Backend:**
-```bash
-cd backend
-python3 -m venv .venv
-source .venv/bin/activate
-pip install -r requirements.txt
-export DATABASE_URL="sqlite:///./test.db"
-uvicorn main:app --reload
-```
+### 2. Connect Your GitHub Repository
+1. Navigate to your GitHub Repository -> **Settings** -> **Webhooks** -> **Add Webhook**.
+2. **Payload URL**: `http://<YOUR_IP_OR_DOMAIN>/webhook/github` (Use *Ngrok* if running locally).
+3. **Content type**: `application/json`.
+4. Select **Let me select individual events** and check **Workflow runs**.
+5. Save and re-run an old workflow to see data instantly populate your dashboard!
 
-**Frontend:**
-```bash
-cd frontend
-npm install
-npm run dev
-```
-
-## GitHub Webhooks Integration
-Go to your GitHub repository -> Settings -> Webhooks -> Add Webhook.
-- **Payload URL:** `https://your-domain.com/webhook/github` (or use ngrok locally: `ngrok http 8000`)
-- **Content type:** `application/json`
-- **Secret:** Match the `GITHUB_WEBHOOK_SECRET` in your `.env`
-- **Events:** Select "Workflow runs"
-
-## Deployment to EC2
-The CI/CD pipeline (`.github/workflows/ci-cd.yml`) handles deployment automatically when pushing to the `main` branch.
-Ensure you have set the following secrets in your GitHub repository:
-- `EC2_HOST`
-- `EC2_USER`
-- `EC2_SSH_KEY`
+---
+*Built with passion to bring clarity to CI/CD pipelines.*
