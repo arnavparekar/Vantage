@@ -40,9 +40,8 @@ jobs:
       - name: Build Backend Docker Image
         run: docker build -t vantage-backend:${{ github.sha }} ./backend
 
-      # Temporarily disabled until Phase 8/12 creates the frontend directory and Dockerfile
-      # - name: Build Frontend Docker Image
-      #   run: docker build -t vantage-frontend:${{ github.sha }} ./frontend
+      - name: Build Frontend Docker Image
+        run: docker build -t vantage-frontend:${{ github.sha }} ./frontend
 
 # Temporarily disabled until EC2 secrets are added to GitHub
 #   deploy:
