@@ -36,10 +36,10 @@ export function RecentRunsTable({ runs, loading }) {
           <tbody>
             {runs.map((run) => (
               <tr key={run.id} className="border-b border-border hover:bg-background/50 transition-colors">
-                <td className="px-4 py-4 font-medium text-textMain">{run.name}</td>
-                <td className="px-4 py-4">{run.repo}</td>
+                <td className="px-4 py-4 font-medium text-textMain">{run.workflow_name}</td>
+                <td className="px-4 py-4">{run.repo_name}</td>
                 <td className="px-4 py-4">
-                  <span className="bg-surface border border-border px-2 py-1 rounded text-xs font-mono">{run.head_branch}</span>
+                  <span className="bg-surface border border-border px-2 py-1 rounded text-xs font-mono">{run.branch}</span>
                 </td>
                 <td className="px-4 py-4">
                   <span className={`badge ${
